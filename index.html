@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Sistema de Trocas - Campo e Cidade</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <div class="container">
+    <h1>Sistema de Trocas</h1>
+    <form id="form-troca">
+      <input type="text" id="item" placeholder="Produto ou Serviço" required />
+      <input type="text" id="descricao" placeholder="Descrição da troca" required />
+      <input type="text" id="contato" placeholder="Contato" required />
+      <button type="submit">Adicionar Troca</button>
+    </form>
+    <ul id="lista-trocas"></ul>
+  </div>
+
+  <script>
+    const form = document.getElementById('form-troca');
+    const lista = document.getElementById('lista-trocas');
+
+    function criarTroca(troca, index) {
+      const li = document.createElement('li');
+      li.innerHTML = `
+        <strong>${troca.item}</strong><br />
+        ${troca.descricao}<br />
+        <em>${troca.contato}</em><br />
+        <button onclick="excluirTroca(${index})">Excluir</button>
+      `;
+      return li;
+    }
+
+    function atualizarLista() {
+      lista.innerHTML = '';
+      const trocas = JSON.parse(localStorage.getItem('trocas') || '[]');
+      trocas.forEach((troca, index) => {
+        lista.appendChild(criarTroca(troca, index));
+      });
+    }
+
+    function excluirTroca(index) {
+      const trocas = JSON.parse(localStorage.getItem('trocas') || '[]');
+      trocas.splice(index, 1);
+      localStorage.setItem('trocas', JSON.stringify(trocas));
+      atualizarLista();
+    }
+
+    form.addEventListener('submit', (e) => {
+      e.preventDefault();
+      const novaTroca = {
+        item: document.getElementById('item').value,
+        descricao: document.getElementById('descricao').value,
+        contato: document.getElementById('contato').value
+      };
+      const trocas = JSON.parse(localStorage.getItem('trocas') || '[]');
+      trocas.push(novaTroca);
+      localStorage.setItem('trocas', JSON.stringify(trocas));
+      form.reset();
+      atualizarLista();
+    });
+
+    atualizarLista();
+  </script>
+</body>
+</html>
